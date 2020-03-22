@@ -5,7 +5,7 @@
 1. clone本项目
 2. 运行本项目中的jenkins.war(版本号: 2.176.1)包或者自行下载最新(注意: 使用root用户和普通user用户run的jenkins的workspace位置不一致)
    具体不一致可[参考](https://github.com/EugeneHuang9638/treadpit/wiki/summary#323-linux%E4%B8%8D%E5%90%8C%E7%94%A8%E6%88%B7%E8%BF%90%E8%A1%8Cjenkinswar), 运行命令 java -jar jenkins.war --httpPort=8050
-3. 访问localhost:8050按照页面指导设置用户名和密码, 选择`Install suggested plugins`安装jenkins建议的插件。
+3. 访问localhost:8050按照页面指导设置用户名和密码, 选择`Install suggested plugins`安装jenkins建议的插件。(若途中会报如下错: `javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target`， 则可以修改`/root/.jenkins/hudson.model.UpdateCenter.xml`文件中的https改成http即可，出现此问题的原因是，本地无相关证书，无法访问https协议的服务)
 4. 安装`multijob`插件
    登录`jenkins首页 -> Manage Jenkins -> Manage Plugins -> Availiable -> 搜索multijob -> 勾选并选择Download without start`。 确认有无下载成功  
    可查看jenkins控制台的log信息(使用nohup的方式启动或者无后台方式启动可查看到控制台信息)或者查看后台启动时指定重定向的log文件。
