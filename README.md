@@ -98,4 +98,281 @@
     
     ```
 
+* 如何查看jenkins镜像的工作目录，有如下两个路径
+
+  1. 镜像内部的`/root/.jenkins/`
+
+  2. 构建镜像时的`VOLUME`指令绑定了镜像内部的`/root/.jenkins/`路径，那究竟是宿主机的哪个目录与之挂在的呢？使用`docker inspect + 容器id或容器名称`命令来确认, eg: `docker inspect jenkins` 执行此命令后，会输出结构如下的信息:
+
+     ```json
+     [
+         {
+             "Id": "5d955a41b56325b04e04657a16c12743abc5505a76e6fe85dbc399e5b796753e",
+             "Created": "2020-03-23T14:14:41.293507324Z",
+             "Path": "java",
+             "Args": [
+                 "-jar",
+                 "jenkins.war",
+                 "--httpPort=8050"
+             ],
+             "State": {
+                 "Status": "running",
+                 "Running": true,
+                 "Paused": false,
+                 "Restarting": false,
+                 "OOMKilled": false,
+                 "Dead": false,
+                 "Pid": 2430,
+                 "ExitCode": 0,
+                 "Error": "",
+                 "StartedAt": "2020-03-23T14:14:46.480503585Z",
+                 "FinishedAt": "0001-01-01T00:00:00Z"
+             },
+             "Image": "sha256:fce6824dd89f87eedc5e43e356e1b78a6143d54290c65c8c587c58507ac6b5a1",
+             "ResolvConfPath": "/var/lib/docker/containers/5d955a41b56325b04e04657a16c12743abc5505a76e6fe85dbc399e5b796753e/resolv.conf",
+             "HostnamePath": "/var/lib/docker/containers/5d955a41b56325b04e04657a16c12743abc5505a76e6fe85dbc399e5b796753e/hostname",
+             "HostsPath": "/var/lib/docker/containers/5d955a41b56325b04e04657a16c12743abc5505a76e6fe85dbc399e5b796753e/hosts",
+             "LogPath": "/var/lib/docker/containers/5d955a41b56325b04e04657a16c12743abc5505a76e6fe85dbc399e5b796753e/5d955a41b56325b04e04657a16c12743abc5505a76e6fe85dbc399e5b796753e-json.log",
+             "Name": "/jenkins",
+             "RestartCount": 0,
+             "Driver": "overlay2",
+             "Platform": "linux",
+             "MountLabel": "",
+             "ProcessLabel": "",
+             "AppArmorProfile": "docker-default",
+             "ExecIDs": null,
+             "HostConfig": {
+                 "Binds": [
+                     "/home/eug/workspace/jenkins-java-backend/jobs:/root/.jenkins/jobs"
+                 ],
+                 "ContainerIDFile": "",
+                 "LogConfig": {
+                     "Type": "json-file",
+                     "Config": {}
+                 },
+                 "NetworkMode": "host",
+                 "PortBindings": {
+                     "8050/tcp": [
+                         {
+                             "HostIp": "",
+                             "HostPort": "8050"
+                         }
+                     ]
+                 },
+                 "RestartPolicy": {
+                     "Name": "no",
+                     "MaximumRetryCount": 0
+                 },
+                 "AutoRemove": false,
+                 "VolumeDriver": "",
+                 "VolumesFrom": null,
+                 "CapAdd": null,
+                 "CapDrop": null,
+                 "Capabilities": null,
+                 "Dns": [],
+                 "DnsOptions": [],
+                 "DnsSearch": [],
+                 "ExtraHosts": null,
+                 "GroupAdd": null,
+                 "IpcMode": "private",
+                 "Cgroup": "",
+                 "Links": null,
+                 "OomScoreAdj": 0,
+                 "PidMode": "",
+                 "Privileged": false,
+                 "PublishAllPorts": false,
+                 "ReadonlyRootfs": false,
+                 "SecurityOpt": null,
+                 "UTSMode": "",
+                 "UsernsMode": "",
+                 "ShmSize": 67108864,
+                 "Runtime": "runc",
+                 "ConsoleSize": [
+                     0,
+                     0
+                 ],
+                 "Isolation": "",
+                 "CpuShares": 0,
+                 "Memory": 0,
+                 "NanoCpus": 0,
+                 "CgroupParent": "",
+                 "BlkioWeight": 0,
+                 "BlkioWeightDevice": [],
+                 "BlkioDeviceReadBps": null,
+                 "BlkioDeviceWriteBps": null,
+                 "BlkioDeviceReadIOps": null,
+                 "BlkioDeviceWriteIOps": null,
+                 "CpuPeriod": 0,
+                 "CpuQuota": 0,
+                 "CpuRealtimePeriod": 0,
+                 "CpuRealtimeRuntime": 0,
+                 "CpusetCpus": "",
+                 "CpusetMems": "",
+                 "Devices": [],
+                 "DeviceCgroupRules": null,
+                 "DeviceRequests": null,
+                 "KernelMemory": 0,
+                 "KernelMemoryTCP": 0,
+                 "MemoryReservation": 0,
+                 "MemorySwap": 0,
+                 "MemorySwappiness": null,
+                 "OomKillDisable": false,
+                 "PidsLimit": null,
+                 "Ulimits": null,
+                 "CpuCount": 0,
+                 "CpuPercent": 0,
+                 "IOMaximumIOps": 0,
+                 "IOMaximumBandwidth": 0,
+                 "MaskedPaths": [
+                     "/proc/asound",
+                     "/proc/acpi",
+                     "/proc/kcore",
+                     "/proc/keys",
+                     "/proc/latency_stats",
+                     "/proc/timer_list",
+                     "/proc/timer_stats",
+                     "/proc/sched_debug",
+                     "/proc/scsi",
+                     "/sys/firmware"
+                 ],
+                 "ReadonlyPaths": [
+                     "/proc/bus",
+                     "/proc/fs",
+                     "/proc/irq",
+                     "/proc/sys",
+                     "/proc/sysrq-trigger"
+                 ]
+             },
+             "GraphDriver": {
+                 "Data": {
+                     "LowerDir": "/var/lib/docker/overlay2/ee1a97c8f344a32c01871c0eaec54d6d556141997776ffacef8758d19cf79a83-init/diff:/var/lib/docker/overlay2/b18b12027ec179983112befb6854c14be4940706591d58ecbbba12459da48c7d/diff:/var/lib/docker/overlay2/517a2ba8b65492a8924d0c918c312652cc9d51cb3305a3a0a96fcbf3b292c7c8/diff:/var/lib/docker/overlay2/187926888df517955161b17d3d8186f8819b98de05d9ca28b97732844c265b33/diff:/var/lib/docker/overlay2/634feff375df5b2c04cad0ae627c301d683e42451145b1d922527116f2bd298b/diff:/var/lib/docker/overlay2/06b35c7aac0be64296c3055059f664061963dfff8b3b6e23327909a1b644b797/diff:/var/lib/docker/overlay2/34221b4a597dfe5117cc042a638c13a3bf15a7ca3efead221522260208ac4ebc/diff:/var/lib/docker/overlay2/b9e017f2836b4e6f738d84351a24ffb24093a9d7d8b78a434919ff3e0e141287/diff:/var/lib/docker/overlay2/e8537efad3b1af2ebfe83ecf0c255152a8a2ff82e9bd54b76b478e215ffe28e5/diff:/var/lib/docker/overlay2/3bacca5cc70365acc8d2e6329dd6f0b873de0cb946a5929672d18199e57c5f4a/diff:/var/lib/docker/overlay2/66fd1ac299fb387ae0743a938452be4a6b6612bfad0a85065faf6dde0c2fb78d/diff",
+                     "MergedDir": "/var/lib/docker/overlay2/ee1a97c8f344a32c01871c0eaec54d6d556141997776ffacef8758d19cf79a83/merged",
+                     "UpperDir": "/var/lib/docker/overlay2/ee1a97c8f344a32c01871c0eaec54d6d556141997776ffacef8758d19cf79a83/diff",
+                     "WorkDir": "/var/lib/docker/overlay2/ee1a97c8f344a32c01871c0eaec54d6d556141997776ffacef8758d19cf79a83/work"
+                 },
+                 "Name": "overlay2"
+             },
+             "Mounts": [
+                 {
+                     "Type": "bind",
+                     "Source": "/home/eug/workspace/jenkins-java-backend/jobs",
+                     "Destination": "/root/.jenkins/jobs",
+                     "Mode": "",
+                     "RW": true,
+                     "Propagation": "rprivate"
+                 },
+                 {
+                     "Type": "volume",
+                     "Name": "daf861dedd5ff437d1db318c329cc36258598c7fbec9a62111b1dd0be4252227",
+                     "Source": "/var/lib/docker/volumes/daf861dedd5ff437d1db318c329cc36258598c7fbec9a62111b1dd0be4252227/_data",
+                     "Destination": "/root/.jenkins",
+                     "Driver": "local",
+                     "Mode": "",
+                     "RW": true,
+                     "Propagation": ""
+                 }
+             ],
+             "Config": {
+                 "Hostname": "ubuntu",
+                 "Domainname": "",
+                 "User": "",
+                 "AttachStdin": false,
+                 "AttachStdout": false,
+                 "AttachStderr": false,
+                 "ExposedPorts": {
+                     "8050/tcp": {}
+                 },
+                 "Tty": true,
+                 "OpenStdin": true,
+                 "StdinOnce": false,
+                 "Env": [
+                     "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/jdk/bin:/usr/local/maven/bin",
+                     "JAVA_HOME=/usr/local/jdk",
+                     "MAVEN_HOME=/usr/local/maven"
+                 ],
+                 "Cmd": null,
+                 "Image": "registry.cn-hangzhou.aliyuncs.com/avengereug/jenkins:v2",
+                 "Volumes": {
+                     "/root/.jenkins": {}
+                 },
+                 "WorkingDir": "/root",
+                 "Entrypoint": [
+                     "java",
+                     "-jar",
+                     "jenkins.war",
+                     "--httpPort=8050"
+                 ],
+                 "OnBuild": null,
+                 "Labels": {
+                     "MAINTAINER": "avengerEug",
+                     "org.label-schema.build-date": "20200114",
+                     "org.label-schema.license": "GPLv2",
+                     "org.label-schema.name": "CentOS Base Image",
+                     "org.label-schema.schema-version": "1.0",
+                     "org.label-schema.vendor": "CentOS",
+                     "org.opencontainers.image.created": "2020-01-14 00:00:00-08:00",
+                     "org.opencontainers.image.licenses": "GPL-2.0-only",
+                     "org.opencontainers.image.title": "CentOS Base Image",
+                     "org.opencontainers.image.vendor": "CentOS"
+                 }
+             },
+             "NetworkSettings": {
+                 "Bridge": "",
+                 "SandboxID": "1c419efa93aead7739f5ff9a062c12572109badcb41cce3eb9e1187ac4075c49",
+                 "HairpinMode": false,
+                 "LinkLocalIPv6Address": "",
+                 "LinkLocalIPv6PrefixLen": 0,
+                 "Ports": {},
+                 "SandboxKey": "/var/run/docker/netns/default",
+                 "SecondaryIPAddresses": null,
+                 "SecondaryIPv6Addresses": null,
+                 "EndpointID": "",
+                 "Gateway": "",
+                 "GlobalIPv6Address": "",
+                 "GlobalIPv6PrefixLen": 0,
+                 "IPAddress": "",
+                 "IPPrefixLen": 0,
+                 "IPv6Gateway": "",
+                 "MacAddress": "",
+                 "Networks": {
+                     "host": {
+                         "IPAMConfig": null,
+                         "Links": null,
+                         "Aliases": null,
+                         "NetworkID": "648c0afff000e653fad1a5eac5d32dffdd6e6f1808a6db0eed2c999a3978e2c2",
+                         "EndpointID": "71e5f186ea3a6f7eb5ecf6e4c394fdeb48b97db5bcfb628e39a15cf474606ea4",
+                         "Gateway": "",
+                         "IPAddress": "",
+                         "IPPrefixLen": 0,
+                         "IPv6Gateway": "",
+                         "GlobalIPv6Address": "",
+                         "GlobalIPv6PrefixLen": 0,
+                         "MacAddress": "",
+                         "DriverOpts": null
+                     }
+                 }
+             }
+         }
+     ]
+     ```
+
+     我们找到`Mounts`节点，如下
+
+     ```json
+     "Mounts": [
+                 {
+                     "Type": "volume",
+                     "Name": "daf861dedd5ff437d1db318c329cc36258598c7fbec9a62111b1dd0be4252227",
+                     "Source": "/var/lib/docker/volumes/daf861dedd5ff437d1db318c329cc36258598c7fbec9a62111b1dd0be4252227/_data",
+                     "Destination": "/root/.jenkins",
+                     "Driver": "local",
+                     "Mode": "",
+                     "RW": true,
+                     "Propagation": ""
+                 }
+        ......
+     ```
+
+     由如上可知，宿主机的`"/var/lib/docker/volumes/daf861dedd5ff437d1db318c329cc36258598c7fbec9a62111b1dd0be4252227/_data"`目录与容器的`/root/.jenkins`目录相互挂载，而`/root/.jenkins`就是jenkins的工作目录
+
   
