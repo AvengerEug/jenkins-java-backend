@@ -375,4 +375,33 @@
 
      由如上可知，宿主机的`"/var/lib/docker/volumes/daf861dedd5ff437d1db318c329cc36258598c7fbec9a62111b1dd0be4252227/_data"`目录与容器的`/root/.jenkins`目录相互挂载，而`/root/.jenkins`就是jenkins的工作目录
 
-  
+  ## 七、Dockerfile
+  ```Dockerfile
+    FROM centos
+    LABEL MAINTAINER=avengerEug
+    ADD apache-maven-3.3.9-bin.tar.gz /usr/local/
+    RUN mv /usr/local/apache-maven-3.3.9 /usr/local/maven
+
+    ADD jdk-8u221-linux-x64.tar.gz  /usr/local/
+    RUN mv /usr/local/jdk1.8.0_221 /usr/local/jdk
+
+    ENV JAVA_HOME=/usr/local/jdk
+    ENV MAVEN_HOME=/usr/local/maven
+    ENV PATH=$PATH:$JAVA_HOME/bin:$MAVEN_HOME/bin
+
+    COPY .jenkins /root/.jenkins/
+    COPY ./jenkins/jenkins.war /root/
+
+    RUN yum install -y git
+
+    VOLUME "/root/.jenkins"
+
+    RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+    RUN echo 'Asia/Shanghai' >/etc/timezone
+
+    EXPOSE 8050
+
+    WORKDIR /root
+
+    ENTRYPOINT ["java", "-jar", "jenkins.war", "--httpPort=8050"]
+  ```
